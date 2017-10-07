@@ -1,0 +1,72 @@
+node {
+
+  try {
+
+    checkout scm
+
+    stage("variables setup") {
+
+      env.VERSION = "1.0.0"
+      env.IMAGE_TAG = "korrd2/jenkins"
+      env.COMMIT_SHA = "${getCommitSha()}"
+
+      withCredentials([usernamePassword(credentialsId: 'DOCKER', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+        env.DOCKER_USERNAME = "$DOCKER_USERNAME"
+        env.DOCKER_PASSWORD = "$DOCKER_PASSWORD"
+      }
+    }
+
+    stage("build") {
+
+      sh "docker login -u='$DOCKER_USERNAME' -p='$DOCKER_PASSWORD'"
+      sh "docker build --pull -t '$IMAGE_TAG:$BUILD_NUMBER' ."
+
+    }
+
+    stage("push") {
+
+      if (env.BRANCH_NAME == "master") {
+
+        sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:lts'"
+        sh "docker push '$IMAGE_TAG:lts'"
+
+      } else {
+
+        def SANITIZED_BRANCH_NAME = "${sanitizedBranchName(BRANCH_NAME)}"
+
+        sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
+        sh "docker push '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
+
+      }
+
+      sh "docker logout"
+
+    }
+
+  } catch (err) {
+
+    sh "echo $err"
+    currentBuild.result = 'FAILURE'
+
+  } finally {
+
+    /* Clean up workspace */
+    deleteDir()
+
+  }
+
+}
+
+def getCommitSha() {
+  // Easy hack to get the current commit SHA
+  sh (
+    script: "git rev-parse HEAD",
+    returnStdout: true
+  ).trim()
+}
+
+def sanitizedBranchName(branchName) {
+  // Remove the verb from the branch (add/...)
+  // and replace all dots with dashes
+  "${branchName.split('/')[1].replaceAll('\\.', '-')}"
+}
