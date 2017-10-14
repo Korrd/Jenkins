@@ -7,6 +7,7 @@ node {
     stage("variables setup") {
 
       env.IMAGE_TAG = "korrd2/jenkins"
+      env.REPO = "Jenkins"
 
       withCredentials([usernamePassword(credentialsId: 'DOCKER', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
         env.DOCKER_USERNAME = "$DOCKER_USERNAME"
@@ -37,14 +38,16 @@ node {
 
       }
 
-      sh "docker logout"
-
     }
+
+    slackSend color: 'good', message: "Branch `$BRANCH_NAME` from repo `$REPO` has built successfully"
 
   } catch (err) {
 
     sh "echo $err"
     currentBuild.result = 'FAILURE'
+
+    slackSend color: 'bad', message: "*$currentBuild.result*: Branch `$BRANCH_NAME` from repo `$REPO` has failed to build \n - *Error Message* ```$err```"
 
   } finally {
 
