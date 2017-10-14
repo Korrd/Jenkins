@@ -6,9 +6,7 @@ node {
 
     stage("variables setup") {
 
-      env.VERSION = "1.0.0"
       env.IMAGE_TAG = "korrd2/jenkins"
-      env.COMMIT_SHA = "${getCommitSha()}"
 
       withCredentials([usernamePassword(credentialsId: 'DOCKER', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
         env.DOCKER_USERNAME = "$DOCKER_USERNAME"
@@ -55,14 +53,6 @@ node {
 
   }
 
-}
-
-def getCommitSha() {
-  // Easy hack to get the current commit SHA
-  sh (
-    script: "git rev-parse HEAD",
-    returnStdout: true
-  ).trim()
 }
 
 def sanitizedBranchName(branchName) {
