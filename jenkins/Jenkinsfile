@@ -47,7 +47,7 @@ node {
     sh "echo $err"
     currentBuild.result = 'FAILURE'
 
-    slackSend color: 'bad', message: "*$currentBuild.result*: Branch `$BRANCH_NAME` from repo `$REPO` has failed to build \n - *Error Message* ```$err```"
+    slackSend color: 'bad', message: "*$currentBuild.result*: Branch `$BRANCH_NAME` from repo `$REPO` has failed to build \n - *Link* \n ${BUILD_URL}console \n - *Error Message* ```$err```"
 
   } finally {
 
