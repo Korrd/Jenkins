@@ -16,26 +16,27 @@ node {
     }
 
     stage("build") {
-
-      sh "docker login -u='$DOCKER_USERNAME' -p='$DOCKER_PASSWORD'"
-      sh "docker build --pull -t '$IMAGE_TAG:$BUILD_NUMBER' ."
-
+      timeout(5) {
+        sh "docker login -u='$DOCKER_USERNAME' -p='$DOCKER_PASSWORD'"
+        sh "docker build --pull -t '$IMAGE_TAG:$BUILD_NUMBER' ."
+      }
     }
 
     stage("push") {
 
       if (env.BRANCH_NAME == "master") {
-
-        sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:lts'"
-        sh "docker push '$IMAGE_TAG:lts'"
-
+        timeout(10) {
+          sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:lts'"
+          sh "docker push '$IMAGE_TAG:lts'"
+        }
       } else {
 
         def SANITIZED_BRANCH_NAME = "${sanitizedBranchName(BRANCH_NAME)}"
 
-        sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
-        sh "docker push '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
-
+        timeout(10) {
+          sh "docker tag '$IMAGE_TAG:$BUILD_NUMBER' '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
+          sh "docker push '$IMAGE_TAG:$SANITIZED_BRANCH_NAME'"
+        }
       }
 
     }
