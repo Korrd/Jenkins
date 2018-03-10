@@ -11,13 +11,11 @@ node {
         env.REPO = "Jenkins"
 
         withCredentials([usernamePassword(credentialsId: 'DOCKER', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-          env.DOCKER_USERNAME = "$DOCKER_USERNAME"
-          env.DOCKER_PASSWORD = "$DOCKER_PASSWORD"
+          sh "docker login -u='$DOCKER_USERNAME' -p='$DOCKER_PASSWORD'"
         }
       }
 
       stage("build") {
-        sh "docker login -u='$DOCKER_USERNAME' -p='$DOCKER_PASSWORD'"
         sh "docker build --pull -t '$IMAGE_TAG:$BUILD_NUMBER' ."
       }
 
