@@ -22,7 +22,7 @@ RUN curl https://get.docker.com/ | sh \
   \
   && pip install -U setuptools==36.0.1 \
   && pip install \
-    ansible==2.4.3.0 \
+    ansible==2.6.4.0 \
   && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
