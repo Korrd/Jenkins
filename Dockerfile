@@ -16,7 +16,7 @@ RUN curl https://get.docker.com/ | sh \
     python-dev \
     jq \
     wget \
-  && wget -nv https://bootstrap.pypa.io/get-pip.py \
+  && wget -nv https://bootstrap.pypa.io/2.6/get-pip.py \
   && python get-pip.py \
   \
   \
