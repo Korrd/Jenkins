@@ -6,8 +6,8 @@ USER root
 
 RUN curl https://get.docker.com/ | sh \
   && usermod -aG docker jenkins \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends \
+  && apt update \
+  && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     build-essential \
     libssl-dev \
     libffi-dev \
