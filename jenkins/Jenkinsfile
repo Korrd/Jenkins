@@ -26,7 +26,7 @@ node {
           sh 'docker push $IMAGE_TAG:lts'
         } else {
 
-          def SANITIZED_BRANCH_NAME = "${sanitizedBranchName(BRANCH_NAME)}"
+          env.SANITIZED_BRANCH_NAME = "${sanitizedBranchName(BRANCH_NAME)}"
 
           sh 'docker tag $IMAGE_TAG:$BUILD_NUMBER $IMAGE_TAG:$SANITIZED_BRANCH_NAME'
           sh 'docker push $IMAGE_TAG:$SANITIZED_BRANCH_NAME'
