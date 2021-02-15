@@ -1,13 +1,11 @@
 FROM jenkins/jenkins:lts
 
-MAINTAINER victomartin@gmail.com
+LABEL MAINTAINER=victomartin@gmail.com
 
 USER root
 
 RUN curl https://get.docker.com/ | sh \
   && usermod -aG docker jenkins \
-  \
-  \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
@@ -18,8 +16,6 @@ RUN curl https://get.docker.com/ | sh \
     wget \
   && wget -nv https://bootstrap.pypa.io/2.6/get-pip.py \
   && python get-pip.py \
-  \
-  \
   && pip install -U setuptools==36.0.1 \
   && pip install \
     ansible==2.10.3 \
